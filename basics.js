@@ -1,3 +1,4 @@
+//basics.js  -- Francisco Arévalo [farevalod@gmail.com]
 //bc -- broadcast a message to everyone in the room.
 //takes:
 //	d: raw input

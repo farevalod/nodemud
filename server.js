@@ -1,3 +1,4 @@
+//server.js  -- Francisco Arévalo [farevalod@gmail.com]
 net = require('net'); //Required for networking functions.
 col = require('./colors.js'); //Enables '.color' string methods.
 parser = require('./parse.js'); //Parser for user input.

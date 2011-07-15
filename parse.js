@@ -1,3 +1,4 @@
+//parse.js  -- Francisco Arévalo [farevalod@gmail.com]
 //parse -- checks user input for commands or chat.
 //takes:
 //	d: raw input
