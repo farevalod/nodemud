@@ -1,4 +1,5 @@
 var net = require('net');
+var col = require('./colors.js');
 
 var sockets = [];
 var chars = [];
@@ -10,7 +11,7 @@ function bc(d)
 		{
 			msg = d.toString('utf8', 0, d.length - 1);
 			sockets[i].write("\r");
-			sockets[i].write(msg);
+			sockets[i].write(msg.yellow);
 			pprompt(i);
 		}
 }
@@ -18,9 +19,12 @@ function bc(d)
 function pprompt(i)
 {
 	if((chars[i] != undefined) && (chars[i].hp != 10))
-		sockets[i].write("\nHP: "+chars[i].hp+"/10> ");
+	{
+		prpt = "\nHP: "+chars[i].hp+"/10> ";
+		sockets[i].write(prpt.red);
+	}
 	else
-		sockets[i].write("\n> ");
+		sockets[i].write("\n> ".red);
 }
 function pluralize(n)
 {
@@ -73,7 +77,9 @@ function parse(d,socket)
 				else
 				{
 					atk = Math.floor(Math.random()*5) + 1;
-					bc(chars[sockets.indexOf(socket)].name + " golpea a " + target[2] + "!\nEl golpe hace "+atk+"hp"+pluralize(atk)+" de daño!");
+					atkstr1 = chars[sockets.indexOf(socket)].name + " golpea a " + target[2] + "!\n";
+					atkstr2 = "El golpe hace "+atk+"hp"+pluralize(atk)+" de daño!";
+					bc(atkstr1.red+atkstr2.red.bold);
 					chars[i].hp -= atk;
 					if(chars[i].hp > 0)
 					{
@@ -83,7 +89,8 @@ function parse(d,socket)
 					{
 						bc(target[2] + " ha muerto.");
 						sockets[i].end("Has sido eliminado!\n");
-						socket.write("Has eliminado a "+target[2]+"! Ganas 500 xp!");
+						xpstr = "Has eliminado a "+target[2]+"! Ganas 500 xp!";
+						socket.write(xpstr.green);
 						chars[sockets.indexOf(socket)].xp += 500;
 						pprompt(sockets.indexOf(socket));
 						delete sockets[i];
