@@ -1,5 +1,4 @@
 var net = require('net');
-var chs = require('./chars.js');
 
 var sockets = [];
 var chars = [];
@@ -17,6 +16,8 @@ var server = net.Server(function (socket) {
 	socket.write("Nota: Escribe 'name x' para setear tu nombre!\n");
 	socket.on('data', 
 		function(d) {
+
+
 			msg = d.toString('utf8', 0, d.length - 1);
 			if(msg.match(/name (\w+)/))
 			{
@@ -25,7 +26,10 @@ var server = net.Server(function (socket) {
 				var i = sockets.indexOf(socket);
 				chars[i].name = target[1];
 				console.log("stored name: " + chars[i].name);
-			}
+				return;
+			}			
+			if(chars[sockets.indexOf(socket)]== undefined)
+				return;
 			else if(msg.match(/hit/))
 			{
 				re = /hit (\w+)/;
@@ -38,7 +42,9 @@ var server = net.Server(function (socket) {
 					else
 					{
 						bc(chars[sockets.indexOf(socket)].name + " hits " + target[1] + "!\n");
-						chars[i].hp -= 3;
+						atk = Math.floor(Math.random()*5) + 1;
+						bc("He hits for " + atk + " hps!\n");
+						chars[i].hp -= atk;
 						if(chars[i].hp > 0)
 							bc(target[1] + " has " + chars[i].hp + "hp.\n");
 						else
@@ -55,9 +61,14 @@ var server = net.Server(function (socket) {
 				if(hit == false)
 					socket.write("No hay nadie con ese nombre.\n");
 			}
-			else for(var i = 0; i<sockets.length; i++)
-				if(sockets[i] != socket)
-					sockets[i].write(d);
+			else
+			{ 
+				for(var i = 0; i<sockets.length; i++)
+					if(sockets[i] == socket)
+						var author = chars[i].name;
+				for(var i = 0; i<sockets.length; i++)
+						sockets[i].write("<"+author+"> "+d);
+			}
 		}
 	);
 	socket.on('end',
