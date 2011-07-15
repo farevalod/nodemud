@@ -8,12 +8,20 @@ function bc(d)
 	for(var i = 0; i < sockets.length; i++)
 		if(sockets[i] != undefined)
 		{
-			sockets[i].write("\r");
+			sockets[i].write("\n");
 			sockets[i].write(d);
-			sockets[i].write("\n$ ");
+			sockets[i].write("\n");
+			pprompt(i);
 		}
 }
 
+function pprompt(i)
+{
+	if((chars[i] != undefined) && (chars[i].hp != 10))
+		sockets[i].write("\rHP: "+chars[i].hp+"/10> ");
+	else
+		sockets[i].write("\r> ");
+}
 function pluralize(n)
 {
 	if(n>1)
@@ -30,7 +38,8 @@ function look(socket)
 			if(chars[i].name)
 				socket.write("["+chars[i].name+"]");
 	}
-	socket.write("\n$ ");
+	socket.write("\n");
+	pprompt(sockets.indexOf(socket));
 }
 
 function parse(d,socket)
@@ -43,7 +52,7 @@ function parse(d,socket)
 		var i = sockets.indexOf(socket);
 		chars[i].name = target[1];
 		console.log(chars);
-		bc(target[1]+" has connected.");
+		bc(target[1]+" se ha conectado.");
 		return;
 	}			
 	if(chars[sockets.indexOf(socket)]== undefined)
@@ -65,12 +74,11 @@ function parse(d,socket)
 				else
 				{
 					atk = Math.floor(Math.random()*5) + 1;
-					bc(chars[sockets.indexOf(socket)].name + " hits " + target[2] + "!\nEl golpe hace "+atk+"hp"+pluralize(atk)+" de daño!");
+					bc(chars[sockets.indexOf(socket)].name + " golpea a " + target[2] + "!\nEl golpe hace "+atk+"hp"+pluralize(atk)+" de daño!");
 					chars[i].hp -= atk;
 					if(chars[i].hp > 0)
 					{
-						sockets[i].write("HP: "+chars[i].hp+"hp"+pluralize(chars[i].hp));
-						sockets[i].write("\n$ ");
+						pprompt(i);
 					}
 					else
 					{
@@ -84,7 +92,10 @@ function parse(d,socket)
 			}
 		}
 		if(hit == false)
-			socket.write("No hay nadie con ese nombre.\n$ ");
+		{
+			socket.write("No hay nadie con ese nombre.\n"); 
+			pprompt(sockets.indexOf(socket));
+		}
 	}
 	else if(msg.match(/^look/))
 	{
@@ -95,8 +106,8 @@ function parse(d,socket)
 			for(var i = 0; i<sockets.length; i++)
 				if(chars[i] != undefined)
 					if(chars[i].name == target[1])
-						socket.write(target[1]+" tiene "+chars[i].hp+" hp"+pluralize(chars[i].hp));
-			socket.write("\n$ ");
+						socket.write(target[1]+" tiene "+chars[i].hp+" hp"+pluralize(chars[i].hp)+"\n");
+			pprompt(sockets.indexOf(socket));
 		}
 		else
 			look(socket);
@@ -106,7 +117,8 @@ function parse(d,socket)
 		socket.write("name x para setear tu nombre a x\n");
 		socket.write("look para mostrar los jugadores conectados\n");
 		socket.write("hit x (o kill x) para atacar a otro jugador\n");
-		socket.write("help muestra estra pantalla\n\n$ ");
+		socket.write("help muestra estra pantalla\n");
+		pprompt(sockets.indexOf(socket));
 	}
 	else
 	{ 
