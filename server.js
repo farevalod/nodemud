@@ -8,9 +8,9 @@ function bc(d)
 	for(var i = 0; i < sockets.length; i++)
 		if(sockets[i] != undefined)
 		{
-			sockets[i].write("\n");
-			sockets[i].write(d);
-			sockets[i].write("\n");
+			msg = d.toString('utf8', 0, d.length - 1);
+			sockets[i].write("\r");
+			sockets[i].write(msg);
 			pprompt(i);
 		}
 }
@@ -18,9 +18,9 @@ function bc(d)
 function pprompt(i)
 {
 	if((chars[i] != undefined) && (chars[i].hp != 10))
-		sockets[i].write("\rHP: "+chars[i].hp+"/10> ");
+		sockets[i].write("\nHP: "+chars[i].hp+"/10> ");
 	else
-		sockets[i].write("\r> ");
+		sockets[i].write("\n> ");
 }
 function pluralize(n)
 {
@@ -38,7 +38,6 @@ function look(socket)
 			if(chars[i].name)
 				socket.write("["+chars[i].name+"]");
 	}
-	socket.write("\n");
 	pprompt(sockets.indexOf(socket));
 }
 
@@ -84,8 +83,13 @@ function parse(d,socket)
 					{
 						bc(target[2] + " ha muerto.");
 						sockets[i].end("Has sido eliminado!\n");
+						socket.write("Has eliminado a "+target[2]+"! Ganas 500 xp!");
+						chars[sockets.indexOf(socket)].xp += 500;
+						pprompt(sockets.indexOf(socket));
 						delete sockets[i];
+						console.log(chars[i].name +" died.");
 						delete chars[i];
+						console.log(chars);
 					}
 					hit = true;
 				}
@@ -93,7 +97,7 @@ function parse(d,socket)
 		}
 		if(hit == false)
 		{
-			socket.write("No hay nadie con ese nombre.\n"); 
+			socket.write("No hay nadie con ese nombre."); 
 			pprompt(sockets.indexOf(socket));
 		}
 	}
@@ -135,6 +139,7 @@ var server = net.Server(function (socket) {
 	var i = sockets.indexOf(socket);
 	chars.push(new Object());
 	chars[i].hp = 10;
+	chars[i].xp = 0;
 	console.log("New connection from: "+socket.remoteAddress);
 	socket.write("Nota: Escribe 'name x' para setear tu nombre!\n");
 	socket.write("Nota: Escribe 'help' para ver una lista de comandos\n");
