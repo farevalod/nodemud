@@ -8,7 +8,7 @@ exports.parse = function(d,socket,sockets,chars)
 		var i = sockets.indexOf(socket);
 		chars[i].name = target[1];
 		console.log(chars);
-		basics.bc(target[1]+" se ha conectado.");
+		basics.bc(target[1]+" se ha conectado.\n");
 		return;
 	}			
 	if(chars[sockets.indexOf(socket)]== undefined)
@@ -31,7 +31,7 @@ exports.parse = function(d,socket,sockets,chars)
 				{
 					atk = Math.floor(Math.random()*5) + 1;
 					atkstr1 = chars[sockets.indexOf(socket)].name + " golpea a " + target[2] + "!\n";
-					atkstr2 = "El golpe hace "+atk+"hp"+basics.pluralize(atk)+" de daño!";
+					atkstr2 = "El golpe hace "+atk+"hp"+basics.pluralize(atk)+" de daño!\n";
 					basics.bc(atkstr1.red+atkstr2.red.bold);
 					chars[i].hp -= atk;
 					if(chars[i].hp > 0)
@@ -40,9 +40,9 @@ exports.parse = function(d,socket,sockets,chars)
 					}
 					else
 					{
-						basics.bc(target[2] + " ha muerto.");
+						basics.bc(target[2] + " ha muerto.\n");
 						sockets[i].end("Has sido eliminado!\n");
-						xpstr = "Has eliminado a "+target[2]+"! Ganas 500 xp!";
+						xpstr = "Has eliminado a "+target[2]+"! Ganas 500 xp!\n";
 						socket.write(xpstr.green);
 						chars[sockets.indexOf(socket)].xp += 500;
 						basics.pprompt(sockets.indexOf(socket));
@@ -57,7 +57,7 @@ exports.parse = function(d,socket,sockets,chars)
 		}
 		if(hit == false)
 		{
-			socket.write("No hay nadie con ese nombre."); 
+			socket.write("No hay nadie con ese nombre.\n"); 
 			basics.pprompt(sockets.indexOf(socket));
 		}
 	}

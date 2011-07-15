@@ -15,7 +15,7 @@ var server = net.Server(function (socket) {
 	console.log("New connection from: "+socket.remoteAddress);
 	socket.write("Nota: Escribe 'name x' para setear tu nombre!\n");
 	socket.write("Nota: Escribe 'help' para ver una lista de comandos\n");
-	socket.write("Conectados: ");
+	socket.write("Conectados: \n");
 	basics.look(socket);
 	socket.on('data', 
 		function(d){
