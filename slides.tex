@@ -1,0 +1,149 @@
+\documentclass{beamer}
+\usetheme{Berlin}
+\usepackage[latin1]{inputenc}
+\usepackage{alltt}
+\title{Node.js}
+\author{Francisco Ar\'evalo \\ \texttt{farevalod@gmail.com}}
+\date{\today}
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+\begin{frame}
+	\frametitle{Contenidos}
+	\tableofcontents
+\end{frame}
+\section{Setup}
+\subsection{Download}
+\begin{frame}
+\frametitle{Download}
+\texttt{http://nodejs.org/dist/node-v0.4.9.tar.gz}
+\end{frame}
+\subsection{Install}
+\begin{frame}
+\frametitle{Install}
+\texttt{./configure \&\& ./make \&\& (sudo) ./make install}
+\end{frame}
+\section{Servers}
+\begin{frame}
+\frametitle{VM}
+\begin{itemize}
+\item V8 es una m\'aquina virtual de Javascript.\\
+\item node.js es una serie de librer\'ias que facilitan tareas de red.
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Never Sleeps}
+\begin{itemize}
+\item Los servidores en node.js nunca duermen... A lo m\'as, idlean.\\
+\item Cuando el event loop est\'a vac\'io, node no ocupa el procesador!
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Siempre puede m\'as}
+\begin{itemize}
+\item Como funciona usando callbacks, cuando recibe un request, hace la llamada.\\
+\item Siempre puede manejar una conecci\'on adicional, el l\'imite es el que impone el sistema.
+\end{itemize}
+\end{frame}
+\subsection{Servidor http}
+\begin{frame}
+\frametitle{Simple servidor http}
+En node.js, un servidor http se puede implementar en 5 lineas:
+\begin{alltt}
+var http = require('http');\\
+http.createServer(function (req, res) {\\
+  res.writeHead(200, {'Content-Type': 'text/plain'});\\
+  res.end('Hello World');}).listen(1337, "127.0.0.1");\\
+console.log('Server running at http://127.0.0.1:1337/');\\
+\end{alltt}
+Y listo!
+\end{frame}
+\subsection{echo server}
+\begin{frame}
+\frametitle{echo server}
+Un servidor de echo en 4 lineas:
+\begin{alltt}
+var net = require('net');\\
+var server = net.createServer(function (socket) {\\
+  socket.write("Echo server");\\
+  socket.pipe(socket);
+}).listen(1337, "127.0.0.1");\\
+\end{alltt}
+Y ya acepta conecciones de los usuarios.
+\end{frame}
+\section{Why Node?}
+\begin{frame}
+\frametitle{Porque node}
+\begin{itemize}
+\item El servidor puede funcionar en el puerto 80, sirviendo http... o ser accesible por telnet via 8000... o recibir emails...\\
+\item La VM ofrece suficiente abstracci\'on para tener todas las libertades.
+\item Toda la API es en base a callbacks, asi que se pueden customizar los retornos de todas las funciones que implementa por default.\\
+\item En node, el ciclo de eventos lleva la direcci\'on de lo que se ejecuta, y el proceso nunca duerme!\\
+\item Las fuentes de informaci\'on pueden ser asincronas, poco fiables, bases de datos, c\'alculos... node renderea a medida que puede.\\
+\end{itemize}
+\end{frame}
+\section{Una prueba}
+\begin{frame}
+\subsection{Objetivos}
+\frametitle{Objetivos:}
+\begin{itemize}
+\item Montar un server con un protocolo arbitrario.
+\item Aprovechar API para trabajar con la red.
+\item Usar js para guardar y manejar objetos.
+\item Programar comportamiento nuevo.
+\item Reutilizar scripts existentes.
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Servidor de prueba:}
+\texttt{nc 4ws.cl 8000}\\
+o\\
+\texttt{telnet 4ws.cl 8000}
+\end{frame}
+\begin{frame}
+\subsection{Implementaci\'on}
+\frametitle{Varios clientes conectados}
+\texttt{
+sockets = [];\\
+sockets.push(socket);//lo agrega al array...\\
+socket.on('data',function(d){\\
+for(var i = 0;i < sockets.sizeOf;i++)\\
+socket[i].write(d);});\\
+// + codigo teardown...
+}
+\end{frame}
+\begin{frame}
+\frametitle{parser}
+\texttt{
+parse = function(d,socket,sockets,chars){\\
+	msg = d.toString('utf8', 0, d.length - 1);\\
+	if(msg.match(/name/)){\\
+	re = /name/;\\
+	target = re.exec(msg);}}
+}
+\\
+Parsea input del usuario en busca de comandos o chat.
+Usa un regexp para seleccionar cada comando y sus argumentos.
+\end{frame}
+\section{Problemas}
+\begin{frame}
+\frametitle{Problemas...}
+\begin{itemize}
+\subsection{Single Core}
+\item No es problema, seg\'un el creador- a ese nivel ya se deber\'ia optimizar para correr en m\'aquinas paralelas (y para los procs est\'a el scheduler del sistema)
+\subsection{Inmadurez}
+\item C\'odigo muy inmaduro
+Todav\'ia no existe una cantidad enorme de librer\'ias, para conectarse a dbs, drivers, etc.
+\subsection{Stack traces}
+\item Stack traces
+Como se ocupa arquitectura de eventos, los stacks de eventos no son como los procedurales, sino que dan muy poco contexto acerca de la funci\'on.
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Links y contacto}
+\begin{itemize}
+\item \texttt{https://github.com/farevalod/nodemud}
+\item \texttt{http://nodejs.org/dist/node-v0.4.9.tar.gz}
+\item \texttt{farevalod@gmail.com}
+\end{document}
